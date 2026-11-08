@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>NEON GLOW CINEMA</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="NEON CINEMA">
+<meta name="theme-color" content="#080808">
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    background: #080808;
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+header {
+    padding: 25px 15px 18px;
+    text-align: center;
+    background: linear-gradient(#210000, #080808);
+    border-bottom: 1px solid #650000;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ff2525;
+    text-shadow: 0 0 8px red, 0 0 20px #ff0000;
+}
+
+.subtitle {
+    color: #aaa;
+    font-size: 11px;
+    letter-spacing: 4px;
+    margin-top: 8px;
+}
+
+main {
+    padding: 18px;
+    max-width: 850px;
+    margin: auto;
+}
+
+.hero {
+    min-height: 260px;
+    border: 1px solid #a00000;
+    border-radius: 18px;
+    padding: 25px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background:
+      radial-gradient(circle at center, #510000 0%, #170000 45%, #090909 100%);
+    box-shadow: 0 0 18px #71000066,
+                inset 0 0 25px #a0000033;
+}
+
+.hero h1 {
+    font-size: 30px;
+    margin: 0 0 12px;
+    text-shadow: 0 0 12px red;
+}
+
+.hero p {
+    color: #ccc;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 18px auto 0;
+    padding: 16px;
+    border: 1px solid #ff3434;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ed0000, #710000);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 0 15px #ff000077;
+}
+
+.button:active {
+    transform: scale(.97);
+    background: #ff2525;
+}
+
+.section-title {
+    color: #ff3434;
+    font-size: 18px;
+    margin: 28px 0 14px;
+    text-shadow: 0 0 8px #ff0000;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.tile {
+    min-height: 105px;
+    padding: 18px 10px;
+    border: 1px solid #5b1515;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #241010, #100909);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+}
+
+.tile .emoji {
+    font-size: 27px;
+}
+
+.tile strong {
+    color: #eee;
+    font-size: 14px;
+}
+
+.note {
+    margin-top: 25px;
+    padding: 14px;
+    border: 1px solid #393939;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    color: #555;
+    padding: 25px 10px;
+    font-size: 11px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">NEON GLOW</div>
+    <div class="subtitle">C I N E M A</div>
+</header>
+
+<main>
+
+    <section class="hero">
+        <h1>ТВОЙ КИНОТЕАТР</h1>
+        <p>
+            Фильмы, сериалы и вечерний просмотр.
+            Открой бесплатную библиотеку Plex
+            и выбери, что посмотреть.
+        </p>
+
+        <a class="button"
+           href="https://watch.plex.tv/"
+           target="_blank">
+           ▶ ОТКРЫТЬ PLEX
+        </a>
+    </section>
+
+    <h2 class="section-title">КАТЕГОРИИ</h2>
+
+    <div class="grid">
+        <div class="tile">
+            <span class="emoji">🎬</span>
+            <strong>ФИЛЬМЫ</strong>
+        </div>
+
+        <div class="tile">
+            <span class="emoji">📺</span>
+            <strong>СЕРИАЛЫ</strong>
+        </div>
+
+        <div class="tile">
+            <span class="emoji">🚀</span>
+            <strong>ФАНТАСТИКА</strong>
+        </div>
+
+        <div class="tile">
+            <span class="emoji">😂</span>
+            <strong>КОМЕДИИ</strong>
+        </div>
+
+        <div class="tile">
+            <span class="emoji">🔎</span>
+            <strong>ДЕТЕКТИВЫ</strong>
+        </div>
+
+        <div class="tile">
+            <span class="emoji">👻</span>
+            <strong>УЖАСЫ</strong>
+        </div>
+    </div>
+
+    <a class="button"
+       href="https://watch.plex.tv/"
+       target="_blank">
+       🍿 ПЕРЕЙТИ К ПРОСМОТРУ
+    </a>
+
+    <div class="note">
+        <strong style="color:#ff3838">ИНФОРМАЦИЯ</strong><br>
+        Для просмотра потребуется интернет и доступ к Plex.
+        Наличие бесплатных фильмов зависит от страны.
+        Воспроизведение выполняется на официальном сайте Plex.
+    </div>
+
+</main>
+
+<footer>
+    NEON GLOW CINEMA · 2026
+</footer>
+
+</body>
+</html>
