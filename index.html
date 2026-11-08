@@ -3,156 +3,142 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>NEON GLOW CINEMA</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="NEON CINEMA">
-<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-title" content="UMKA PLAY">
+<meta name="theme-color" content="#101014">
+<title>UMKA PLAY</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
+* { box-sizing:border-box; }
 body {
-    margin: 0;
-    background: #080808;
-    color: white;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
+    margin:0;
+    background:#101014;
+    color:white;
+    font-family:Arial,sans-serif;
 }
-
 header {
-    padding: 25px 15px 18px;
-    text-align: center;
-    background: linear-gradient(#210000, #080808);
-    border-bottom: 1px solid #650000;
+    background:#19191f;
+    padding:17px;
+    border-bottom:1px solid #34343e;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
-
 .logo {
-    font-size: 27px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: #ff2525;
-    text-shadow: 0 0 8px red, 0 0 20px #ff0000;
+    font-size:25px;
+    font-weight:bold;
 }
-
-.subtitle {
-    color: #aaa;
-    font-size: 11px;
-    letter-spacing: 4px;
-    margin-top: 8px;
-}
-
+.logo span { color:#ff414b; }
 main {
-    padding: 18px;
-    max-width: 850px;
-    margin: auto;
+    max-width:1000px;
+    margin:auto;
+    padding:15px;
 }
-
 .hero {
-    min-height: 260px;
-    border: 1px solid #a00000;
-    border-radius: 18px;
-    padding: 25px 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    background:
-      radial-gradient(circle at center, #510000 0%, #170000 45%, #090909 100%);
-    box-shadow: 0 0 18px #71000066,
-                inset 0 0 25px #a0000033;
+    padding:25px 18px;
+    border-radius:16px;
+    background:linear-gradient(120deg,#6d1728,#25202d);
+    margin-bottom:18px;
 }
-
-.hero h1 {
-    font-size: 30px;
-    margin: 0 0 12px;
-    text-shadow: 0 0 12px red;
+.hero h1 { font-size:26px; margin:0 0 10px; }
+.hero p { color:#ddd; font-size:13px; line-height:1.5; }
+.search {
+    width:100%;
+    padding:14px;
+    background:#24242d;
+    border:1px solid #444;
+    border-radius:10px;
+    color:white;
+    font-size:16px;
+    margin-bottom:15px;
 }
-
-.hero p {
-    color: #ccc;
-    line-height: 1.5;
-    font-size: 14px;
+nav {
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:15px;
 }
-
-.button {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 18px auto 0;
-    padding: 16px;
-    border: 1px solid #ff3434;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ed0000, #710000);
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    text-align: center;
-    box-shadow: 0 0 15px #ff000077;
+nav button {
+    background:#292932;
+    color:white;
+    border:0;
+    padding:11px 16px;
+    border-radius:20px;
+    white-space:nowrap;
 }
-
-.button:active {
-    transform: scale(.97);
-    background: #ff2525;
+nav button.active {
+    background:#ff414b;
 }
-
-.section-title {
-    color: #ff3434;
-    font-size: 18px;
-    margin: 28px 0 14px;
-    text-shadow: 0 0 8px #ff0000;
+h2 {
+    font-size:19px;
+    margin:15px 0;
 }
-
 .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
 }
-
-.tile {
-    min-height: 105px;
-    padding: 18px 10px;
-    border: 1px solid #5b1515;
-    border-radius: 13px;
-    background: linear-gradient(145deg, #241010, #100909);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 9px;
+.card {
+    background:#202027;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid #383840;
+    cursor:pointer;
 }
-
-.tile .emoji {
-    font-size: 27px;
+.poster {
+    height:130px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:bold;
+    text-align:center;
+    background:linear-gradient(135deg,#7c2536,#25202d);
 }
-
-.tile strong {
-    color: #eee;
-    font-size: 14px;
+.info { padding:11px; }
+.name { font-weight:bold; font-size:14px; }
+.desc { color:#aaa; font-size:11px; margin-top:6px; }
+.play { color:#ff626b; font-size:12px; margin-top:9px; }
+.player {
+    display:none;
+    background:#050505;
+    border:1px solid #444;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:20px;
 }
-
-.note {
-    margin-top: 25px;
-    padding: 14px;
-    border: 1px solid #393939;
-    border-radius: 10px;
-    color: #aaa;
-    font-size: 12px;
-    line-height: 1.6;
+.player.show { display:block; }
+.player video,
+.player iframe {
+    width:100%;
+    aspect-ratio:16/9;
+    border:0;
+    background:black;
+    border-radius:8px;
 }
-
+.player-title {
+    margin:5px 0 10px;
+    font-weight:bold;
+}
+.close {
+    background:#ff414b;
+    border:0;
+    color:white;
+    padding:9px 14px;
+    border-radius:8px;
+    margin-bottom:10px;
+}
 footer {
-    text-align: center;
-    color: #555;
-    padding: 25px 10px;
-    font-size: 11px;
+    text-align:center;
+    padding:25px;
+    color:#666;
+    font-size:11px;
+}
+@media(min-width:650px) {
+    .grid { grid-template-columns:repeat(4,1fr); }
+    .poster { height:175px; }
 }
 </style>
 </head>
@@ -160,79 +146,238 @@ footer {
 <body>
 
 <header>
-    <div class="logo">NEON GLOW</div>
-    <div class="subtitle">C I N E M A</div>
+    <div class="logo">UMKA<span>PLAY</span></div>
+    <div>📺 Онлайн</div>
 </header>
 
 <main>
 
-    <section class="hero">
-        <h1>ТВОЙ КИНОТЕАТР</h1>
-        <p>
-            Фильмы, сериалы и вечерний просмотр.
-            Открой бесплатную библиотеку Plex
-            и выбери, что посмотреть.
-        </p>
+<section class="hero">
+    <h1>СМОТРИ ЛЮБИМОЕ</h1>
+    <p>Телевидение, фильмы, сериалы и мультфильмы в одном приложении.</p>
+</section>
 
-        <a class="button"
-           href="https://watch.plex.tv/"
-           target="_blank">
-           ▶ ОТКРЫТЬ PLEX
-        </a>
-    </section>
+<input class="search" id="search"
+       placeholder="🔎 Поиск фильмов и каналов..."
+       oninput="render()">
 
-    <h2 class="section-title">КАТЕГОРИИ</h2>
+<nav id="nav">
+    <button class="active" onclick="category('all',this)">Главная</button>
+    <button onclick="category('tv',this)">ТВ</button>
+    <button onclick="category('movies',this)">Фильмы</button>
+    <button onclick="category('series',this)">Сериалы</button>
+    <button onclick="category('kids',this)">Детям</button>
+    <button onclick="category('saved',this)">Избранное</button>
+</nav>
 
-    <div class="grid">
-        <div class="tile">
-            <span class="emoji">🎬</span>
-            <strong>ФИЛЬМЫ</strong>
-        </div>
+<section class="player" id="player">
+    <div class="player-title" id="playerTitle"></div>
+    <button class="close" onclick="closePlayer()">✕ Закрыть</button>
+    <video id="video" controls playsinline
+           webkit-playsinline></video>
+    <iframe id="frame" allowfullscreen
+            style="display:none"></iframe>
+</section>
 
-        <div class="tile">
-            <span class="emoji">📺</span>
-            <strong>СЕРИАЛЫ</strong>
-        </div>
-
-        <div class="tile">
-            <span class="emoji">🚀</span>
-            <strong>ФАНТАСТИКА</strong>
-        </div>
-
-        <div class="tile">
-            <span class="emoji">😂</span>
-            <strong>КОМЕДИИ</strong>
-        </div>
-
-        <div class="tile">
-            <span class="emoji">🔎</span>
-            <strong>ДЕТЕКТИВЫ</strong>
-        </div>
-
-        <div class="tile">
-            <span class="emoji">👻</span>
-            <strong>УЖАСЫ</strong>
-        </div>
-    </div>
-
-    <a class="button"
-       href="https://watch.plex.tv/"
-       target="_blank">
-       🍿 ПЕРЕЙТИ К ПРОСМОТРУ
-    </a>
-
-    <div class="note">
-        <strong style="color:#ff3838">ИНФОРМАЦИЯ</strong><br>
-        Для просмотра потребуется интернет и доступ к Plex.
-        Наличие бесплатных фильмов зависит от страны.
-        Воспроизведение выполняется на официальном сайте Plex.
-    </div>
+<h2 id="heading">Рекомендуем</h2>
+<div class="grid" id="catalog"></div>
 
 </main>
 
-<footer>
-    NEON GLOW CINEMA · 2026
-</footer>
+<footer>UMKA PLAY · ONLINE CINEMA</footer>
 
+<script>
+
+// ДОБАВЛЯЙ СЮДА СВОИ ЛЕГАЛЬНЫЕ ИСТОЧНИКИ
+
+const content = [
+
+{
+ title:"Открытое кино",
+ category:"movies",
+ description:"Фильмы с открытой лицензией",
+ poster:"🎬 КИНО",
+ url:"https://archive.org/details/feature_films",
+ type:"link"
+},
+
+{
+ title:"Plex — бесплатное кино",
+ category:"movies",
+ description:"Официальная библиотека Plex",
+ poster:"PLEX",
+ url:"https://watch.plex.tv/",
+ type:"link"
+},
+
+{
+ title:"Мосфильм",
+ category:"movies",
+ description:"Официальная коллекция",
+ poster:"МОСФИЛЬМ",
+ url:"https://www.youtube.com/@MosfilmRuOfficial",
+ type:"link"
+},
+
+{
+ title:"Мультфильмы",
+ category:"kids",
+ description:"Открытая анимация",
+ poster:"🐻 ДЕТЯМ",
+ url:"https://archive.org/details/animationandcartoons",
+ type:"link"
+},
+
+{
+ title:"Документальное кино",
+ category:"series",
+ description:"Документальные фильмы",
+ poster:"🌍 DOC",
+ url:"https://archive.org/details/movies",
+ type:"link"
+},
+
+{
+ title:"Добавить телеканал",
+ category:"tv",
+ description:"Подключить свой поток",
+ poster:"📺 LIVE TV",
+ url:"",
+ type:"empty"
+}
+
+];
+
+let currentCategory="all";
+let favorites=JSON.parse(
+    localStorage.getItem("umkaFavorites") || "[]"
+);
+
+function category(cat,button) {
+    currentCategory=cat;
+
+    document.querySelectorAll("nav button")
+        .forEach(b=>b.classList.remove("active"));
+
+    button.classList.add("active");
+    render();
+}
+
+function render() {
+
+    const query=document.getElementById("search")
+        .value.toLowerCase();
+
+    const catalog=document.getElementById("catalog");
+    catalog.innerHTML="";
+
+    const list=content.filter(item=>{
+
+        const categoryOK=
+            currentCategory==="all" ||
+            (currentCategory==="saved"
+                ? favorites.includes(item.title)
+                : item.category===currentCategory);
+
+        const searchOK=
+            item.title.toLowerCase().includes(query) ||
+            item.description.toLowerCase().includes(query);
+
+        return categoryOK && searchOK;
+    });
+
+    document.getElementById("heading").textContent=
+        currentCategory==="tv" ? "Телеканалы" :
+        currentCategory==="movies" ? "Фильмы" :
+        currentCategory==="series" ? "Сериалы" :
+        currentCategory==="kids" ? "Мультфильмы" :
+        currentCategory==="saved" ? "Избранное" :
+        "Рекомендуем";
+
+    list.forEach(item=>{
+
+        const card=document.createElement("div");
+        card.className="card";
+
+        card.innerHTML=`
+            <div class="poster">${item.poster}</div>
+            <div class="info">
+                <div class="name">${item.title}</div>
+                <div class="desc">${item.description}</div>
+                <div class="play">▶ ОТКРЫТЬ</div>
+                <button style="margin-top:10px"
+                    onclick="event.stopPropagation();favorite('${item.title.replace(/'/g,"\\'")}')">
+                    ${favorites.includes(item.title)?"♥":"♡"}
+                </button>
+            </div>
+        `;
+
+        card.addEventListener("click",()=>openItem(item));
+        catalog.appendChild(card);
+    });
+
+    if(!list.length) {
+        catalog.innerHTML="<p>Ничего не найдено.</p>";
+    }
+}
+
+function favorite(title) {
+    if(favorites.includes(title)) {
+        favorites=favorites.filter(x=>x!==title);
+    } else {
+        favorites.push(title);
+    }
+
+    localStorage.setItem(
+        "umkaFavorites",
+        JSON.stringify(favorites)
+    );
+
+    render();
+}
+
+function openItem(item) {
+
+    if(item.type==="empty") {
+        alert("Добавь ссылку на легальный поток в массив content.");
+        return;
+    }
+
+    if(item.type==="video") {
+        document.getElementById("frame").style.display="none";
+        const video=document.getElementById("video");
+        video.style.display="block";
+        video.src=item.url;
+        video.load();
+        video.play().catch(()=>{});
+    } else {
+        closePlayer();
+        window.open(item.url,"_blank");
+        return;
+    }
+
+    document.getElementById("playerTitle").textContent=item.title;
+    document.getElementById("player").classList.add("show");
+    document.getElementById("player")
+        .scrollIntoView({behavior:"smooth"});
+}
+
+function closePlayer() {
+    const video=document.getElementById("video");
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+
+    const frame=document.getElementById("frame");
+    frame.src="about:blank";
+    frame.style.display="none";
+
+    document.getElementById("player")
+        .classList.remove("show");
+}
+
+render();
+
+</script>
 </body>
 </html>
