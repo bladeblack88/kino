@@ -214,7 +214,7 @@ function render(){
 function playChannel(index){
  var channel=allChannels[index];if(!channel)return;
  current=index;byId('now').textContent=channel.title;
- var video=byId('video');
+ var video=document.getElementById('video');
  video.pause();video.src=channel.url;video.load();
  var result=video.play();
  if(result&&typeof result.catch==='function')result.catch(function(){setMessage('Нажмите Play в видеоплеере. На iPad воспроизведение начинается только после действия пользователя.')});
@@ -238,8 +238,8 @@ function runConnectionTests(){
  }
  add('Matrix IPTV — отчёт диагностики');add('Дата: '+(new Date()).toString());add('Страница: '+location.href);
  add('Браузер: '+navigator.userAgent);add('navigator.onLine: '+navigator.onLine);add('Протокол страницы: '+location.protocol);
- add('Видео HLS native: '+(byId('video').canPlayType('application/vnd.apple.mpegurl')||'нет'));
- add('Видео MP4: '+(byId('video').canPlayType('video/mp4')||'нет'));
+ add('Видео HLS native: '+(document.getElementById('video').canPlayType('application/vnd.apple.mpegurl')||'нет'));
+ add('Видео MP4: '+(document.getElementById('video').canPlayType('video/mp4')||'нет'));
  requestTest('API список каналов',API_URL,function(){
   requestTest('API проверка активации (только GET, без активации)','https://iptv.matrix.online/api/v1/auth/app/activate/check',function(){add('--- КОНЕЦ ОТЧЁТА ---');});
  });
@@ -258,7 +258,6 @@ loadChannels();
 </script>
 <script>
 (function(){
- function byId(id){return document.getElementById(id)}
   var b=document.getElementById('runTests'),out=document.getElementById('testResults'),copy=document.getElementById('copyTests');
  if(!b||!out)return;
  var report='';
@@ -282,7 +281,7 @@ loadChannels();
   var results=[],pending=targets.length*2,started=new Date();
   for(var i=0;i<targets.length*2;i++)results[i]='ОЖИДАНИЕ';
   function render(){
-   var s=['MATRIX IPTV — ПАКЕТНАЯ ДИАГНОСТИКА','Время: '+started.toString(),'Браузер: '+navigator.userAgent,'navigator.onLine: '+navigator.onLine,'Страница: '+location.href,'Проверок: '+(targets.length*2),'Все запросы запускаются параллельно. Только GET; вход и активация не выполняются.','Безопасный контекст: '+window.isSecureContext,'HLS native: '+(byId('video').canPlayType('application/vnd.apple.mpegurl')||'нет')+'; MPEG-TS: '+(byId('video').canPlayType('video/mp2t')||'нет')+'; MP4: '+(byId('video').canPlayType('video/mp4')||'нет'),''];
+   var s=['MATRIX IPTV — ПАКЕТНАЯ ДИАГНОСТИКА','Время: '+started.toString(),'Браузер: '+navigator.userAgent,'navigator.onLine: '+navigator.onLine,'Страница: '+location.href,'Проверок: '+(targets.length*2),'Все запросы запускаются параллельно. Только GET; вход и активация не выполняются.','Безопасный контекст: '+window.isSecureContext,'HLS native: '+(document.getElementById('video').canPlayType('application/vnd.apple.mpegurl')||'нет')+'; MPEG-TS: '+(document.getElementById('video').canPlayType('video/mp2t')||'нет')+'; MP4: '+(document.getElementById('video').canPlayType('video/mp4')||'нет'),''];
    for(var j=0;j<targets.length;j++){
     s.push((j+1)+'. '+targets[j].name);
     s.push('   CORS/XHR: '+results[j*2]);
