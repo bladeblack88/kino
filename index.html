@@ -271,6 +271,8 @@ loadChannels();
   {name:'Matrix: таблица данных',url:'https://iptv.matrix.online/server/load.php?type=itv&action=get_simple_data_table&JsHttpRequest=1-xml'},
   {name:'Matrix: проверка состояния приложения (GET)',url:'https://iptv.matrix.online/api/v1/auth/app/activate/check'},
   {name:'Unity: корень сервера (HTTP)',url:'http://unity.matrix.online/'},
+  {name:'Unity Relay UDP-мост (HTTP)',url:'http://unity.matrix.online/udp/238.1.1.154:1234',relay:true},
+  {name:'Unity Relay UDP-мост (HTTPS)',url:'https://unity.matrix.online/udp/238.1.1.154:1234',relay:true},
   {name:'TVApp: корень сервера',url:'https://tvapp.matrix.online/'},
   {name:'Monit: корень сервера',url:'https://monit.matrix.online/'}
  ];
@@ -279,7 +281,7 @@ loadChannels();
   var results=[],pending=targets.length*2,started=new Date();
   for(var i=0;i<targets.length*2;i++)results[i]='ОЖИДАНИЕ';
   function render(){
-   var s=['MATRIX IPTV — ПАКЕТНАЯ ДИАГНОСТИКА','Время: '+started.toString(),'Браузер: '+navigator.userAgent,'navigator.onLine: '+navigator.onLine,'Страница: '+location.href,'Проверок: '+(targets.length*2),'Все запросы запускаются параллельно. Только GET; вход и активация не выполняются.',''];
+   var s=['MATRIX IPTV — ПАКЕТНАЯ ДИАГНОСТИКА','Время: '+started.toString(),'Браузер: '+navigator.userAgent,'navigator.onLine: '+navigator.onLine,'Страница: '+location.href,'Проверок: '+(targets.length*2),'Все запросы запускаются параллельно. Только GET; вход и активация не выполняются.','Безопасный контекст: '+window.isSecureContext,'HLS native: '+(byId('video').canPlayType('application/vnd.apple.mpegurl')||'нет')+'; MPEG-TS: '+(byId('video').canPlayType('video/mp2t')||'нет')+'; MP4: '+(byId('video').canPlayType('video/mp4')||'нет'),''];
    for(var j=0;j<targets.length;j++){
     s.push((j+1)+'. '+targets[j].name);
     s.push('   CORS/XHR: '+results[j*2]);
@@ -300,12 +302,24 @@ loadChannels();
    try{
     var x=new XMLHttpRequest(),done=false,t=setTimeout(function(){if(!done){done=true;finish(xi,'ТАЙМАУТ 12 с')}},12000);
     x.open('GET',item.url,true);x.timeout=12000;x.withCredentials=false;
-    x.onload=function(){
-     if(done)return;done=true;clearTimeout(t);
-     var body='';try{body=String(x.responseText||'').replace(/\s+/g,' ').slice(0,180)}catch(e){}
-     finish(xi,'HTTP '+x.status+(body?' | '+body:'')+' | ответ прочитан');
-    };
-    x.onerror=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ОШИБКА CORS/СЕТИ: ответ прочитать нельзя')};
+    if(item.relay){
+     x.responseType='arraybuffer';
+     x.onreadystatechange=function(){
+      if(done||x.readyState!==2||!x.status)return;
+      done=true;clearTimeout(t);
+      var ct='не указан';try{ct=x.getResponseHeader('Content-Type')||ct}catch(e){}
+      finish(xi,'HTTP '+x.status+' | Content-Type: '+ct+' | заголовки прочитаны; тело не загружается полностью');
+      try{x.abort()}catch(e){}
+     };
+    }else{
+     x.onload=function(){
+      if(done)return;done=true;clearTimeout(t);
+      var body='';try{body=String(x.responseText||'').replace(/\s+/g,' ').slice(0,180)}catch(e){}
+      finish(xi,'HTTP '+x.status+(body?' | '+body:'')+' | ответ прочитан');
+     };
+    }
+    x.onerror=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ОШИБКА CORS/СЕТИ: ответ прочитать нельзя (возможна блокировка mixed content для HTTP)')};
+    x.onabort=function(){};
     x.ontimeout=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ТАЙМАУТ XHR')};
     x.send(null);
    }catch(e){finish(xi,'ОШИБКА запуска: '+e.message)}
