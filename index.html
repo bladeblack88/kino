@@ -38,6 +38,13 @@ footer{color:#667085;text-align:center;padding:22px 10px;font-size:12px}
 @media(min-width:900px){.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}.playerbox{margin-bottom:0}#channels{max-height:68vh}}
 @media(max-width:520px){header{padding:11px 13px}.logo{font-size:21px}.status{font-size:11px}main{padding:12px}.toolbar{gap:7px}.toolbar button{padding:9px 10px;font-size:13px}#channels{max-height:42vh}}
 </style>
+<script>
+window.onerror=function(message,source,line,column,error){
+ var box=document.getElementById('testResults');
+ if(box){box.textContent='ОШИБКА JAVASCRIPT: '+message+'\\nСтрока: '+line+', колонка: '+column+'\\nФайл: '+source;}
+ return false;
+};
+</script>
 </head>
 <body>
 <header><div class="logo">MATRIX <span>IPTV</span></div><div class="status" id="status">Ожидание подключения</div></header>
@@ -49,8 +56,8 @@ footer{color:#667085;text-align:center;padding:22px 10px;font-size:12px}
 <div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div><div class="side" style="margin:14px 0;padding:14px">
 <div style="font-weight:bold;margin-bottom:10px">Диагностика соединения Matrix</div>
 <div style="color:#aab3c3;font-size:13px;line-height:1.4;margin-bottom:10px">Проверки выполняются из Safari. Авторизация и активация не отправляются.</div>
-<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="runConnectionTests();return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
-<pre id="testResults" style="white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre></div>
+<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="var b=document.getElementById('testResults');b.textContent='ЖУРНАЛ: нажатие кнопки зарегистрировано.\\n';try{if(typeof runConnectionTests==='function'){runConnectionTests();}else{b.textContent+='Функция runConnectionTests не загружена. Вероятна синтаксическая ошибка основного скрипта.';}}catch(e){b.textContent+='ИСКЛЮЧЕНИЕ: '+e.message;}return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
+<pre id="testResults" style="min-height:100px;white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre></div>
 <div class="toolbar"><label for="playlistFile" style="display:block;background:#1c2534;border:1px solid #30394c;border-radius:10px;padding:12px 14px;font-weight:bold;cursor:pointer">Открыть плейлист M3U с iPad</label><input id="playlistFile" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" style="display:none"></div>
 <div class="filters" id="filters"><button class="active" data-cat="all" type="button">Все каналы</button><button class="secondary" id="favFilter" type="button">★ Избранное</button></div>
 <div class="layout">
