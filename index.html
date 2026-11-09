@@ -1,383 +1,97 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="UMKA PLAY">
-<meta name="theme-color" content="#101014">
-<title>UMKA PLAY</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#090b12">
+<title>Matrix IPTV</title>
 <style>
-* { box-sizing:border-box; }
-body {
-    margin:0;
-    background:#101014;
-    color:white;
-    font-family:Arial,sans-serif;
-}
-header {
-    background:#19191f;
-    padding:17px;
-    border-bottom:1px solid #34343e;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.logo {
-    font-size:25px;
-    font-weight:bold;
-}
-.logo span { color:#ff414b; }
-main {
-    max-width:1000px;
-    margin:auto;
-    padding:15px;
-}
-.hero {
-    padding:25px 18px;
-    border-radius:16px;
-    background:linear-gradient(120deg,#6d1728,#25202d);
-    margin-bottom:18px;
-}
-.hero h1 { font-size:26px; margin:0 0 10px; }
-.hero p { color:#ddd; font-size:13px; line-height:1.5; }
-.search {
-    width:100%;
-    padding:14px;
-    background:#24242d;
-    border:1px solid #444;
-    border-radius:10px;
-    color:white;
-    font-size:16px;
-    margin-bottom:15px;
-}
-nav {
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:15px;
-}
-nav button {
-    background:#292932;
-    color:white;
-    border:0;
-    padding:11px 16px;
-    border-radius:20px;
-    white-space:nowrap;
-}
-nav button.active {
-    background:#ff414b;
-}
-h2 {
-    font-size:19px;
-    margin:15px 0;
-}
-.grid {
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-.card {
-    background:#202027;
-    border-radius:12px;
-    overflow:hidden;
-    border:1px solid #383840;
-    cursor:pointer;
-}
-.poster {
-    height:130px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    font-weight:bold;
-    text-align:center;
-    background:linear-gradient(135deg,#7c2536,#25202d);
-}
-.info { padding:11px; }
-.name { font-weight:bold; font-size:14px; }
-.desc { color:#aaa; font-size:11px; margin-top:6px; }
-.play { color:#ff626b; font-size:12px; margin-top:9px; }
-.player {
-    display:none;
-    background:#050505;
-    border:1px solid #444;
-    padding:10px;
-    border-radius:12px;
-    margin-bottom:20px;
-}
-.player.show { display:block; }
-.player video,
-.player iframe {
-    width:100%;
-    aspect-ratio:16/9;
-    border:0;
-    background:black;
-    border-radius:8px;
-}
-.player-title {
-    margin:5px 0 10px;
-    font-weight:bold;
-}
-.close {
-    background:#ff414b;
-    border:0;
-    color:white;
-    padding:9px 14px;
-    border-radius:8px;
-    margin-bottom:10px;
-}
-footer {
-    text-align:center;
-    padding:25px;
-    color:#666;
-    font-size:11px;
-}
-@media(min-width:650px) {
-    .grid { grid-template-columns:repeat(4,1fr); }
-    .poster { height:175px; }
-}
+:root{color-scheme:dark;--bg:#090b12;--panel:#141925;--panel2:#1c2534;--accent:#8b5cf6;--text:#f4f5fb;--muted:#9aa5b8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px Arial,sans-serif}
+header{height:76px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:#101522;border-bottom:1px solid #283044}
+.logo{font-size:26px;font-weight:800;letter-spacing:1px}.logo span{color:#a78bfa}.status{color:var(--muted);font-size:14px}
+main{max-width:1440px;margin:auto;padding:22px 28px}.toolbar{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+input,select{background:var(--panel);color:var(--text);border:1px solid #30394c;border-radius:10px;padding:13px 15px;font-size:16px}
+#search{flex:1;min-width:220px}button{border:0;border-radius:10px;padding:13px 18px;background:var(--accent);color:white;font-size:15px;font-weight:700;cursor:pointer}
+button.secondary{background:var(--panel2);border:1px solid #30394c}button:focus,input:focus,.channel:focus{outline:3px solid #c4b5fd;outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:20px}.playerbox{background:#000;border:1px solid #293246;border-radius:14px;overflow:hidden;min-height:250px}
+video{width:100%;aspect-ratio:16/9;display:block;background:#000}.now{padding:15px 18px;background:var(--panel);font-size:18px;font-weight:700}
+.message{padding:14px 16px;color:var(--muted);line-height:1.5;background:var(--panel);border-radius:10px;margin:0 0 16px}
+.side{background:var(--panel);border:1px solid #293246;border-radius:14px;overflow:hidden;max-height:72vh;display:flex;flex-direction:column}
+.sidehead{padding:16px 18px;font-weight:700;border-bottom:1px solid #293246;display:flex;justify-content:space-between}
+#channels{overflow:auto;padding:8px}.channel{padding:13px 12px;border-radius:9px;display:flex;gap:12px;align-items:center;cursor:pointer;border:1px solid transparent}
+.channel:hover,.channel.active{background:var(--panel2);border-color:#4c3b79}.num{color:var(--muted);width:34px;font-size:13px}.chname{font-weight:600;flex:1}.star{color:#fbbf24}
+.filters{display:flex;gap:8px;overflow:auto;margin-bottom:16px;padding:3px}.filters button{white-space:nowrap}.filters button.active{background:#6d42ca}
+footer{color:#667085;text-align:center;padding:24px;font-size:12px}
+@media(max-width:850px){main{padding:14px}.layout{grid-template-columns:1fr}.side{max-height:48vh}header{padding:0 16px}}
 </style>
 </head>
-
 <body>
-
-<header>
-    <div class="logo">UMKA<span>PLAY</span></div>
-    <div>📺 Онлайн</div>
-</header>
-
+<header><div class="logo">MATRIX <span>IPTV</span></div><div class="status" id="status">Подключение не выполнено</div></header>
 <main>
-
-<section class="hero">
-    <h1>СМОТРИ ЛЮБИМОЕ</h1>
-    <p>Телевидение, фильмы, сериалы и мультфильмы в одном приложении.</p>
+<div class="toolbar">
+<input id="search" type="search" placeholder="Поиск телеканала…" autocomplete="off">
+<button id="reload">Обновить список</button>
+<button id="favoritesOnly" class="secondary">★ Избранное</button>
+</div>
+<div id="message" class="message">Загружаем список каналов Matrix…</div>
+<div class="filters" id="filters"><button class="active" data-cat="all">Все каналы</button></div>
+<div class="layout">
+<section>
+<div class="playerbox"><video id="video" controls playsinline webkit-playsinline></video><div class="now" id="now">Выберите телеканал</div></div>
 </section>
-
-<input class="search" id="search"
-       placeholder="🔎 Поиск фильмов и каналов..."
-       oninput="render()">
-
-<nav id="nav">
-    <button class="active" onclick="category('all',this)">Главная</button>
-    <button onclick="category('tv',this)">ТВ</button>
-    <button onclick="category('movies',this)">Фильмы</button>
-    <button onclick="category('series',this)">Сериалы</button>
-    <button onclick="category('kids',this)">Детям</button>
-    <button onclick="category('saved',this)">Избранное</button>
-</nav>
-
-<section class="player" id="player">
-    <div class="player-title" id="playerTitle"></div>
-    <button class="close" onclick="closePlayer()">✕ Закрыть</button>
-    <video id="video" controls playsinline
-           webkit-playsinline></video>
-    <iframe id="frame" allowfullscreen
-            style="display:none"></iframe>
-</section>
-
-<h2 id="heading">Рекомендуем</h2>
-<div class="grid" id="catalog"></div>
-
+<aside class="side"><div class="sidehead"><span>Телеканалы</span><span id="count">0</span></div><div id="channels"></div></aside>
+</div>
 </main>
-
-<footer>UMKA PLAY · ONLINE CINEMA</footer>
-
+<footer>Matrix IPTV Web · управление стрелками и кнопкой OK на пульте</footer>
 <script>
-
-// ДОБАВЛЯЙ СЮДА СВОИ ЛЕГАЛЬНЫЕ ИСТОЧНИКИ
-
-const content = [
-
-{
- title:"Открытое кино",
- category:"movies",
- description:"Фильмы с открытой лицензией",
- poster:"🎬 КИНО",
- url:"https://archive.org/details/feature_films",
- type:"link"
-},
-
-{
- title:"Plex — бесплатное кино",
- category:"movies",
- description:"Официальная библиотека Plex",
- poster:"PLEX",
- url:"https://watch.plex.tv/",
- type:"link"
-},
-
-{
- title:"Мосфильм",
- category:"movies",
- description:"Официальная коллекция",
- poster:"МОСФИЛЬМ",
- url:"https://www.youtube.com/@MosfilmRuOfficial",
- type:"link"
-},
-
-{
- title:"Мультфильмы",
- category:"kids",
- description:"Открытая анимация",
- poster:"🐻 ДЕТЯМ",
- url:"https://archive.org/details/animationandcartoons",
- type:"link"
-},
-
-{
- title:"Документальное кино",
- category:"series",
- description:"Документальные фильмы",
- poster:"🌍 DOC",
- url:"https://archive.org/details/movies",
- type:"link"
-},
-
-{
- title:"Добавить телеканал",
- category:"tv",
- description:"Подключить свой поток",
- poster:"📺 LIVE TV",
- url:"",
- type:"empty"
+const PLAYLIST_URL='https://iptv.matrix.online/playlist/?format=m3uuni';
+let allChannels=[],activeCategory='all',favoritesOnly=false,current=-1;
+const $=id=>document.getElementById(id);
+function setMessage(t){$('message').textContent=t}
+function parseM3U(text){
+ const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/);const out=[];let meta='';
+ for(const raw of lines){const line=raw.trim();if(!line)continue;if(line.startsWith('#EXTINF')){meta=line;continue}
+ if(line.startsWith('#'))continue;if(!meta)continue;
+ const title=(meta.match(/,(.*)$/)||[])[1]||'Телеканал';
+ const group=(meta.match(/group-title="([^"]*)"/i)||[])[1]||'Без категории';
+ const logo=(meta.match(/tvg-logo="([^"]*)"/i)||[])[1]||'';
+ out.push({title:title.trim(),group,url:line,logo});meta='';
+ }return out;
 }
-
-];
-
-let currentCategory="all";
-let favorites=JSON.parse(
-    localStorage.getItem("umkaFavorites") || "[]"
-);
-
-function category(cat,button) {
-    currentCategory=cat;
-
-    document.querySelectorAll("nav button")
-        .forEach(b=>b.classList.remove("active"));
-
-    button.classList.add("active");
-    render();
+async function loadPlaylist(){
+ $('status').textContent='Загружаем…';setMessage('Запрашиваем официальный плейлист Matrix IPTV…');
+ try{
+  const r=await fetch(PLAYLIST_URL,{cache:'no-store'});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const txt=await r.text();const parsed=parseM3U(txt);
+  if(!parsed.length)throw new Error('В ответе не найден список M3U-каналов');
+  allChannels=parsed;buildFilters();render();$('status').textContent='Каналов: '+allChannels.length;
+  setMessage('Список каналов загружен. Выберите канал справа.');
+ }catch(e){
+  $('status').textContent='Нет подключения';
+  setMessage('Не удалось получить плейлист Matrix из браузера: '+e.message+'. Возможно, сервер запрещает запросы с другого домена (CORS). Тогда потребуется поддерживаемый Matrix веб/API-доступ или небольшой серверный посредник.');
+  $('channels').innerHTML='';$('count').textContent='0';
+ }
 }
-
-function render() {
-
-    const query=document.getElementById("search")
-        .value.toLowerCase();
-
-    const catalog=document.getElementById("catalog");
-    catalog.innerHTML="";
-
-    const list=content.filter(item=>{
-
-        const categoryOK=
-            currentCategory==="all" ||
-            (currentCategory==="saved"
-                ? favorites.includes(item.title)
-                : item.category===currentCategory);
-
-        const searchOK=
-            item.title.toLowerCase().includes(query) ||
-            item.description.toLowerCase().includes(query);
-
-        return categoryOK && searchOK;
-    });
-
-    document.getElementById("heading").textContent=
-        currentCategory==="tv" ? "Телеканалы" :
-        currentCategory==="movies" ? "Фильмы" :
-        currentCategory==="series" ? "Сериалы" :
-        currentCategory==="kids" ? "Мультфильмы" :
-        currentCategory==="saved" ? "Избранное" :
-        "Рекомендуем";
-
-    list.forEach(item=>{
-
-        const card=document.createElement("div");
-        card.className="card";
-
-        card.innerHTML=`
-            <div class="poster">${item.poster}</div>
-            <div class="info">
-                <div class="name">${item.title}</div>
-                <div class="desc">${item.description}</div>
-                <div class="play">▶ ОТКРЫТЬ</div>
-                <button style="margin-top:10px"
-                    onclick="event.stopPropagation();favorite('${item.title.replace(/'/g,"\\'")}')">
-                    ${favorites.includes(item.title)?"♥":"♡"}
-                </button>
-            </div>
-        `;
-
-        card.addEventListener("click",()=>openItem(item));
-        catalog.appendChild(card);
-    });
-
-    if(!list.length) {
-        catalog.innerHTML="<p>Ничего не найдено.</p>";
-    }
+function buildFilters(){
+ const groups=[...new Set(allChannels.map(c=>c.group).filter(Boolean))];
+ $('filters').innerHTML='<button class="active" data-cat="all">Все каналы</button>'+groups.map(g=>'<button data-cat="'+esc(g)+'">'+esc(g)+'</button>').join('');
+ $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render()});
 }
-
-function favorite(title) {
-    if(favorites.includes(title)) {
-        favorites=favorites.filter(x=>x!==title);
-    } else {
-        favorites.push(title);
-    }
-
-    localStorage.setItem(
-        "umkaFavorites",
-        JSON.stringify(favorites)
-    );
-
-    render();
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ const q=$('search').value.toLocaleLowerCase();const fav=JSON.parse(localStorage.getItem('matrixFavs')||'[]');
+ const list=allChannels.map((c,i)=>({...c,index:i})).filter(c=>(activeCategory==='all'||c.group===activeCategory)&&(!favoritesOnly||fav.includes(c.url))&&c.title.toLocaleLowerCase().includes(q));
+ $('count').textContent=list.length;
+ $('channels').innerHTML=list.map(c=>'<div class="channel '+(current===c.index?'active':'')+'" tabindex="0" data-index="'+c.index+'"><span class="num">'+(c.index+1)+'</span><span class="chname">'+esc(c.title)+'</span><span class="star" data-star="'+c.index+'">'+(fav.includes(c.url)?'★':'☆')+'</span></div>').join('')||'<div class="message">Каналы не найдены</div>';
+ $('channels').querySelectorAll('.channel').forEach(el=>{el.onclick=()=>play(Number(el.dataset.index));el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();play(Number(el.dataset.index))}}});
+ $('channels').querySelectorAll('[data-star]').forEach(el=>el.onclick=e=>{e.stopPropagation();const c=allChannels[Number(el.dataset.star)];const a=JSON.parse(localStorage.getItem('matrixFavs')||'[]');localStorage.setItem('matrixFavs',JSON.stringify(a.includes(c.url)?a.filter(x=>x!==c.url):[...a,c.url]));render()});
 }
-
-function openItem(item) {
-
-    if(item.type==="empty") {
-        alert("Добавь ссылку на легальный поток в массив content.");
-        return;
-    }
-
-    if(item.type==="video") {
-        document.getElementById("frame").style.display="none";
-        const video=document.getElementById("video");
-        video.style.display="block";
-        video.src=item.url;
-        video.load();
-        video.play().catch(()=>{});
-    } else {
-        closePlayer();
-        window.open(item.url,"_blank");
-        return;
-    }
-
-    document.getElementById("playerTitle").textContent=item.title;
-    document.getElementById("player").classList.add("show");
-    document.getElementById("player")
-        .scrollIntoView({behavior:"smooth"});
-}
-
-function closePlayer() {
-    const video=document.getElementById("video");
-    video.pause();
-    video.removeAttribute("src");
-    video.load();
-
-    const frame=document.getElementById("frame");
-    frame.src="about:blank";
-    frame.style.display="none";
-
-    document.getElementById("player")
-        .classList.remove("show");
-}
-
-render();
-
+function play(i){const c=allChannels[i];if(!c)return;current=i;$('now').textContent=c.title;$('video').src=c.url;$('video').load();$('video').play().catch(()=>setMessage('Нажмите Play на плеере. Если поток не запускается, формат или доступ может быть несовместим с браузером телевизора.'));render()}
+$('reload').onclick=loadPlaylist;$('search').oninput=render;$('favoritesOnly').onclick=()=>{favoritesOnly=!favoritesOnly;$('favoritesOnly').classList.toggle('active',favoritesOnly);render()};
+document.addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp'].includes(e.key)&&document.activeElement.tagName!=='INPUT'){const els=[...$('channels').querySelectorAll('.channel')];if(!els.length)return;e.preventDefault();let n=els.findIndex(x=>Number(x.dataset.index)===current);n=e.key==='ArrowDown'?Math.min(n+1,els.length-1):Math.max(n-1,0);els[n].focus()}});
+loadPlaylist();
 </script>
 </body>
 </html>
