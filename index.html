@@ -56,41 +56,9 @@ window.onerror=function(message,source,line,column,error){
 <div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div><div class="side" style="margin:14px 0;padding:14px">
 <div style="font-weight:bold;margin-bottom:10px">Диагностика соединения Matrix</div>
 <div style="color:#aab3c3;font-size:13px;line-height:1.4;margin-bottom:10px">Проверки выполняются из Safari. Авторизация и активация не отправляются.</div>
-<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="var b=document.getElementById('testResults');b.textContent='ЖУРНАЛ: нажатие кнопки зарегистрировано.\\n';try{if(typeof runConnectionTests==='function'){runConnectionTests();}else{b.textContent+='Функция runConnectionTests не загружена. Вероятна синтаксическая ошибка основного скрипта.';}}catch(e){b.textContent+='ИСКЛЮЧЕНИЕ: '+e.message;}return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
+<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="document.getElementById('testResults').textContent='ПРОВЕРКА: JavaScript выполняется. Если видите эту надпись, нажатие кнопки работает.';alert('JavaScript работает в этом браузере');return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
 <pre id="testResults" style="min-height:100px;white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre>
-<script>
-(function(){
- var b=document.getElementById('runTests'),o=document.getElementById('testResults');
- if(!b||!o)return;
- b.onclick=function(){
-  var log=[];
-  function put(s){log.push(s);o.textContent=log.join('\n');}
-  put('ЖУРНАЛ ДИАГНОСТИКИ — автономный запуск');
-  put('Время: '+new Date().toString());
-  put('Safari: '+navigator.userAgent);
-  put('Сеть navigator.onLine: '+navigator.onLine);
-  put('Страница: '+location.href);
-  var v=document.getElementById('video');
-  if(v){put('HLS: '+(v.canPlayType('application/vnd.apple.mpegurl')||'нет'));put('MP4: '+(v.canPlayType('video/mp4')||'нет'));}
-  function test(name,url,next){
-   put(name+': запрос отправлен');
-   var x=new XMLHttpRequest(),ended=false,t=setTimeout(function(){finish('таймаут 12 секунд');},12000);
-   function finish(s){if(ended)return;ended=true;clearTimeout(t);put(name+': '+s);if(next)next();}
-   try{
-    x.open('GET',url,true);x.timeout=11000;
-    x.onreadystatechange=function(){if(x.readyState===4)finish('HTTP '+x.status+(x.responseText?' | '+String(x.responseText).substring(0,180):'')+' | ответ доступен');};
-    x.onerror=function(){finish('ошибка сети/CORS: браузер не разрешил прочитать ответ');};
-    x.ontimeout=function(){finish('таймаут XHR');};
-    x.send(null);
-   }catch(e){finish('ошибка запуска: '+e.message);}
-  }
-  test('API каналов','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml',function(){
-   test('API check activation GET','https://iptv.matrix.online/api/v1/auth/app/activate/check',function(){put('ТЕСТЫ ЗАВЕРШЕНЫ');});
-  });
-  return false;
- };
-})();
-</script>
+
 </div>
 <div class="toolbar"><label for="playlistFile" style="display:block;background:#1c2534;border:1px solid #30394c;border-radius:10px;padding:12px 14px;font-weight:bold;cursor:pointer">Открыть плейлист M3U с iPad</label><input id="playlistFile" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" style="display:none"></div>
 <div class="filters" id="filters"><button class="active" data-cat="all" type="button">Все каналы</button><button class="secondary" id="favFilter" type="button">★ Избранное</button></div>
