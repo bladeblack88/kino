@@ -261,47 +261,72 @@ loadChannels();
  var b=document.getElementById('runTests'),out=document.getElementById('testResults'),copy=document.getElementById('copyTests');
  if(!b||!out)return;
  var report='';
+ var targets=[
+  {name:'Контроль CORS GitHub API',url:'https://api.github.com/'},
+  {name:'Контроль CORS GitHub raw',url:'https://raw.githubusercontent.com/'},
+  {name:'Matrix: корень сайта',url:'https://iptv.matrix.online/'},
+  {name:'Matrix: load.php без параметров',url:'https://iptv.matrix.online/server/load.php'},
+  {name:'Matrix: список каналов',url:'https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml'},
+  {name:'Matrix: жанры',url:'https://iptv.matrix.online/server/load.php?type=itv&action=get_genres&JsHttpRequest=1-xml'},
+  {name:'Matrix: таблица данных',url:'https://iptv.matrix.online/server/load.php?type=itv&action=get_simple_data_table&JsHttpRequest=1-xml'},
+  {name:'Matrix: проверка состояния приложения (GET)',url:'https://iptv.matrix.online/api/v1/auth/app/activate/check'},
+  {name:'Unity: корень сервера (HTTP)',url:'http://unity.matrix.online/'},
+  {name:'TVApp: корень сервера',url:'https://tvapp.matrix.online/'},
+  {name:'Monit: корень сервера',url:'https://monit.matrix.online/'}
+ ];
  function run(){
-  b.disabled=true;out.textContent='Запускаю безопасные GET-проверки…';report='';
-  var lines=[];
-  function log(s){lines.push(s);report=lines.join('\n');out.textContent=report;}
-  function test(label,url,next){
-   log(label+': запрос…');
-   var x=new XMLHttpRequest(),done=false,t=setTimeout(function(){finish('ТАЙМАУТ (15 секунд)')},15000);
-   function finish(result){if(done)return;done=true;clearTimeout(t);log(label+': '+result);if(next)next();}
-   try{
-    x.open('GET',url,true);x.timeout=15000;
-    x.onload=function(){var body='';try{body=(x.responseText||'').replace(/\\s+/g,' ').slice(0,500)}catch(e){}
-     finish('HTTP '+x.status+(body?' | тело: '+body:'')+' | CORS разрешил прочитать ответ');};
-    x.onerror=function(){finish('ОШИБКА CORS/СЕТИ — браузер не смог прочитать ответ')};
-    x.ontimeout=function(){finish('ТАЙМАУТ XHR')};
-    x.send();
-   }catch(e){finish('ОШИБКА запуска: '+e.message)}
+  b.disabled=true;report='';
+  var results=[],pending=targets.length*2,started=new Date();
+  for(var i=0;i<targets.length*2;i++)results[i]='ОЖИДАНИЕ';
+  function render(){
+   var s=['MATRIX IPTV — ПАКЕТНАЯ ДИАГНОСТИКА','Время: '+started.toString(),'Браузер: '+navigator.userAgent,'navigator.onLine: '+navigator.onLine,'Страница: '+location.href,'Проверок: '+(targets.length*2),'Все запросы запускаются параллельно. Только GET; вход и активация не выполняются.',''];
+   for(var j=0;j<targets.length;j++){
+    s.push((j+1)+'. '+targets[j].name);
+    s.push('   CORS/XHR: '+results[j*2]);
+    s.push('   Сеть/no-cors: '+results[j*2+1]);
+   }
+   s.push('');
+   s.push(pending===0?'--- ВСЕ ТЕСТЫ ЗАВЕРШЕНЫ ---':'Выполнено: '+(targets.length*2-pending)+' из '+(targets.length*2));
+   report=s.join('\n');out.textContent=report;
   }
-  log('MATRIX IPTV — БЕЗОПАСНАЯ ДИАГНОСТИКА');
-  log('Время: '+new Date().toString());
-  log('Браузер: '+navigator.userAgent);
-  log('navigator.onLine: '+navigator.onLine);
-  log('Страница: '+location.href);
-  log('Проверяются только GET-запросы чтения. Активация, вход и изменение данных НЕ выполняются.');
-  test('Контроль CORS (GitHub API)','https://api.github.com/',function(){
-   test('Matrix — базовый load.php','https://iptv.matrix.online/server/load.php',function(){
-    test('Matrix — список каналов','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml',function(){
-     test('Matrix — жанры','https://iptv.matrix.online/server/load.php?type=itv&action=get_genres&JsHttpRequest=1-xml',function(){
-      test('Matrix — таблица данных','https://iptv.matrix.online/server/load.php?type=itv&action=get_simple_data_table&JsHttpRequest=1-xml',function(){
-       log('--- ТЕСТЫ ЗАВЕРШЕНЫ ---');b.disabled=false;
-      });
-     });
-    });
-   });
+  function finish(index,value){
+   if(results[index]!=='ОЖИДАНИЕ')return;
+   results[index]=value;pending--;render();
+   if(pending===0)b.disabled=false;
+  }
+  render();
+  targets.forEach(function(item,n){
+   var xi=n*2;
+   try{
+    var x=new XMLHttpRequest(),done=false,t=setTimeout(function(){if(!done){done=true;finish(xi,'ТАЙМАУТ 12 с')}},12000);
+    x.open('GET',item.url,true);x.timeout=12000;x.withCredentials=false;
+    x.onload=function(){
+     if(done)return;done=true;clearTimeout(t);
+     var body='';try{body=String(x.responseText||'').replace(/\\s+/g,' ').slice(0,180)}catch(e){}
+     finish(xi,'HTTP '+x.status+(body?' | '+body:'')+' | ответ прочитан');
+    };
+    x.onerror=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ОШИБКА CORS/СЕТИ: ответ прочитать нельзя')};
+    x.ontimeout=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ТАЙМАУТ XHR')};
+    x.send(null);
+   }catch(e){finish(xi,'ОШИБКА запуска: '+e.message)}
+   var fi=xi+1;
+   if(typeof fetch==='function'){
+    var settled=false,ft=setTimeout(function(){if(!settled){settled=true;finish(fi,'ТАЙМАУТ fetch 12 с')}},12000);
+    try{
+     fetch(item.url,{method:'GET',mode:'no-cors',cache:'no-store'})
+      .then(function(r){if(settled)return;settled=true;clearTimeout(ft);finish(fi,'СЕТЕВОЕ ЗАВЕРШЕНИЕ; type='+r.type+', status='+r.status+' (opaque/0 не раскрывает HTTP-ответ)')})
+      .catch(function(e){if(settled)return;settled=true;clearTimeout(ft);finish(fi,'ОШИБКА fetch: '+(e&&e.message?e.message:String(e)))});
+    }catch(e){clearTimeout(ft);finish(fi,'ОШИБКА запуска fetch: '+e.message)}
+   }else finish(fi,'fetch не поддерживается этим браузером');
   });
  }
  b.onclick=run;
  if(copy)copy.onclick=function(){
-  if(!report){out.textContent='Сначала запустите тесты.';return;}
+  if(!report){out.textContent='Сначала запустите пакет тестов.';return;}
+  function fallback(){out.textContent=report+'\n\nВыделите и скопируйте текст вручную.';}
   if(navigator.clipboard&&navigator.clipboard.writeText){
-   navigator.clipboard.writeText(report).then(function(){out.textContent=report+'\n\nОтчёт скопирован.'},function(){out.textContent=report+'\n\nСкопируйте текст вручную.'});
-  }else{out.textContent=report+'\n\nВыделите и скопируйте текст вручную.';}
+   navigator.clipboard.writeText(report).then(function(){out.textContent=report+'\n\nОтчёт скопирован.'},fallback);
+  }else fallback();
  };
 })();
 </script>
