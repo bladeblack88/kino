@@ -46,7 +46,11 @@ footer{color:#667085;text-align:center;padding:22px 10px;font-size:12px}
 <input id="search" type="search" placeholder="Поиск телеканала…" autocomplete="off">
 <button id="reload" type="button">Обновить</button>
 </div>
-<div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div>
+<div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div><div class="side" style="margin:14px 0;padding:14px">
+<div style="font-weight:bold;margin-bottom:10px">Диагностика соединения Matrix</div>
+<div style="color:#aab3c3;font-size:13px;line-height:1.4;margin-bottom:10px">Проверки выполняются из Safari. Авторизация и активация не отправляются.</div>
+<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
+<pre id="testResults" style="white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre></div>
 <div class="toolbar"><label for="playlistFile" style="display:block;background:#1c2534;border:1px solid #30394c;border-radius:10px;padding:12px 14px;font-weight:bold;cursor:pointer">Открыть плейлист M3U с iPad</label><input id="playlistFile" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" style="display:none"></div>
 <div class="filters" id="filters"><button class="active" data-cat="all" type="button">Все каналы</button><button class="secondary" id="favFilter" type="button">★ Избранное</button></div>
 <div class="layout">
@@ -207,6 +211,33 @@ function playChannel(index){
  if(result&&typeof result.catch==='function')result.catch(function(){setMessage('Нажмите Play в видеоплеере. На iPad воспроизведение начинается только после действия пользователя.')});
  render();
 }
+var testReport='';
+function runConnectionTests(){
+ var box=byId('testResults'),lines=[];
+ function add(s){lines.push(s);box.textContent=lines.join('\n');testReport=lines.join('\n');}
+ function requestTest(label,url,done){
+  var x=new XMLHttpRequest(),finished=false,timer;
+  add(label+': проверка…');x.open('GET',url,true);x.timeout=12000;x.withCredentials=false;
+  function finish(result){if(finished)return;finished=true;clearTimeout(timer);add(label+': '+result);if(done)done();}
+  x.onreadystatechange=function(){if(x.readyState!==4)return;var body='';try{body=String(x.responseText||'').replace(/\s+/g,' ').substring(0,220)}catch(e){}if(x.status>0)finish('HTTP '+x.status+(body?' | ответ: '+body:'')+' | CORS разрешил прочитать ответ');};
+  x.onerror=function(){finish('ОШИБКА СЕТИ/CORS — Safari не дал прочитать ответ (это не доказывает, что сервер выключен)')};
+  x.ontimeout=function(){finish('ТАЙМАУТ через 12 секунд')};
+  try{x.send(null)}catch(e){finish('ОШИБКА запуска: '+e.message)}
+ }
+ add('Matrix IPTV — отчёт диагностики');add('Дата: '+(new Date()).toString());add('Страница: '+location.href);
+ add('Браузер: '+navigator.userAgent);add('navigator.onLine: '+navigator.onLine);add('Протокол страницы: '+location.protocol);
+ add('Видео HLS native: '+(byId('video').canPlayType('application/vnd.apple.mpegurl')||'нет'));
+ add('Видео MP4: '+(byId('video').canPlayType('video/mp4')||'нет'));
+ requestTest('API список каналов',API_URL,function(){
+  requestTest('API проверка активации (только GET, без активации)','https://iptv.matrix.online/api/v1/auth/app/activate/check',function(){add('--- КОНЕЦ ОТЧЁТА ---');});
+ });
+}
+byId('runTests').onclick=runConnectionTests;
+byId('copyTests').onclick=function(){
+ if(!testReport){setMessage('Сначала запустите тесты.');return}
+ function fallbackCopy(){var t=document.createElement('textarea');t.value=testReport;document.body.appendChild(t);t.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(t);setMessage(ok?'Отчёт скопирован. Пришлите его сюда.':'Не удалось скопировать. Выделите текст отчёта вручную.')}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(testReport).then(function(){setMessage('Отчёт скопирован. Пришлите его сюда.')},fallbackCopy)}else fallbackCopy();
+};
 byId('reload').onclick=loadChannels;
 byId('search').oninput=render;
 loadChannels();
