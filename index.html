@@ -256,5 +256,50 @@ byId('reload').onclick=loadChannels;
 byId('search').oninput=render;
 loadChannels();
 </script>
+<script>
+(function(){
+ var b=document.getElementById('runTests'),out=document.getElementById('testResults');
+ if(!b||!out)return;
+ b.onclick=function(){
+  var lines=[];
+  function log(s){lines.push(s);out.textContent=lines.join('\n');}
+  function xhr(label,url){
+   return new Promise(function(resolve){
+    var x=new XMLHttpRequest(),ended=false,t=setTimeout(function(){finish('ТАЙМАУТ')},10000);
+    function finish(s){if(ended)return;ended=true;clearTimeout(t);log(label+': '+s);resolve();}
+    try{
+     x.open('GET',url,true);x.timeout=10000;
+     x.onload=function(){finish('HTTP '+x.status+' — браузер прочитал ответ')};
+     x.onerror=function(){finish('ОШИБКА CORS/СЕТИ (XHR не получил доступ к ответу)')};
+     x.ontimeout=function(){finish('ТАЙМАУТ XHR')};
+     x.send();
+    }catch(e){finish('ОШИБКА запуска: '+e.message)}
+   });
+  }
+  function opaque(label,url){
+   if(!window.fetch){log(label+': fetch не поддерживается');return Promise.resolve();}
+   return Promise.race([
+    fetch(url,{method:'GET',mode:'no-cors',cache:'no-store'}).then(function(r){
+     log(label+': запрос завершён; type='+r.type+', status='+r.status+' (opaque/0 ожидаемы для no-cors)');
+    },function(e){log(label+': сетевой отказ fetch — '+e.message);}),
+    new Promise(function(resolve){setTimeout(function(){log(label+': таймаут fetch');resolve();},11000);})
+   ]);
+  }
+  log('MATRIX — ТЕСТ ДОСТУПНОСТИ И CORS');
+  log('Браузер: '+navigator.userAgent);
+  log('Время: '+new Date().toString());
+  log('Интернет-индикатор: '+navigator.onLine);
+  log('Сначала контрольный запрос к example.com, затем Matrix.');
+  xhr('Контроль CORS example.com','https://example.com/');
+  setTimeout(function(){
+   xhr('Matrix API через CORS','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml');
+   setTimeout(function(){
+    opaque('Matrix API через no-cors (только факт сетевого завершения)','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml');
+    setTimeout(function(){opaque('Контроль example.com через no-cors','https://example.com/');},100);
+   },100);
+  },100);
+ };
+})();
+</script>
 </body>
 </html>
