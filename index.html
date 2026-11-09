@@ -56,7 +56,7 @@ window.onerror=function(message,source,line,column,error){
 <div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div><div class="side" style="margin:14px 0;padding:14px">
 <div style="font-weight:bold;margin-bottom:10px">Диагностика соединения Matrix</div>
 <div style="color:#aab3c3;font-size:13px;line-height:1.4;margin-bottom:10px">Проверки выполняются из Safari. Авторизация и активация не отправляются.</div>
-<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="document.getElementById('testResults').textContent='ПРОВЕРКА: JavaScript выполняется. Если видите эту надпись, нажатие кнопки работает.';alert('JavaScript работает в этом браузере');return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
+<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
 <pre id="testResults" style="min-height:100px;white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre>
 
 </div>
@@ -258,46 +258,50 @@ loadChannels();
 </script>
 <script>
 (function(){
- var b=document.getElementById('runTests'),out=document.getElementById('testResults');
+ var b=document.getElementById('runTests'),out=document.getElementById('testResults'),copy=document.getElementById('copyTests');
  if(!b||!out)return;
- b.onclick=function(){
+ var report='';
+ function run(){
+  b.disabled=true;out.textContent='Запускаю безопасные GET-проверки…';report='';
   var lines=[];
-  function log(s){lines.push(s);out.textContent=lines.join('\n');}
-  function xhr(label,url){
-   return new Promise(function(resolve){
-    var x=new XMLHttpRequest(),ended=false,t=setTimeout(function(){finish('ТАЙМАУТ')},10000);
-    function finish(s){if(ended)return;ended=true;clearTimeout(t);log(label+': '+s);resolve();}
-    try{
-     x.open('GET',url,true);x.timeout=10000;
-     x.onload=function(){finish('HTTP '+x.status+' — браузер прочитал ответ')};
-     x.onerror=function(){finish('ОШИБКА CORS/СЕТИ (XHR не получил доступ к ответу)')};
-     x.ontimeout=function(){finish('ТАЙМАУТ XHR')};
-     x.send();
-    }catch(e){finish('ОШИБКА запуска: '+e.message)}
-   });
+  function log(s){lines.push(s);report=lines.join('\n');out.textContent=report;}
+  function test(label,url,next){
+   log(label+': запрос…');
+   var x=new XMLHttpRequest(),done=false,t=setTimeout(function(){finish('ТАЙМАУТ (15 секунд)')},15000);
+   function finish(result){if(done)return;done=true;clearTimeout(t);log(label+': '+result);if(next)next();}
+   try{
+    x.open('GET',url,true);x.timeout=15000;
+    x.onload=function(){var body='';try{body=(x.responseText||'').replace(/\\s+/g,' ').slice(0,500)}catch(e){}
+     finish('HTTP '+x.status+(body?' | тело: '+body:'')+' | CORS разрешил прочитать ответ');};
+    x.onerror=function(){finish('ОШИБКА CORS/СЕТИ — браузер не смог прочитать ответ')};
+    x.ontimeout=function(){finish('ТАЙМАУТ XHR')};
+    x.send();
+   }catch(e){finish('ОШИБКА запуска: '+e.message)}
   }
-  function opaque(label,url){
-   if(!window.fetch){log(label+': fetch не поддерживается');return Promise.resolve();}
-   return Promise.race([
-    fetch(url,{method:'GET',mode:'no-cors',cache:'no-store'}).then(function(r){
-     log(label+': запрос завершён; type='+r.type+', status='+r.status+' (opaque/0 ожидаемы для no-cors)');
-    },function(e){log(label+': сетевой отказ fetch — '+e.message);}),
-    new Promise(function(resolve){setTimeout(function(){log(label+': таймаут fetch');resolve();},11000);})
-   ]);
-  }
-  log('MATRIX — ТЕСТ ДОСТУПНОСТИ И CORS');
-  log('Браузер: '+navigator.userAgent);
+  log('MATRIX IPTV — БЕЗОПАСНАЯ ДИАГНОСТИКА');
   log('Время: '+new Date().toString());
-  log('Интернет-индикатор: '+navigator.onLine);
-  log('Сначала контрольный запрос к example.com, затем Matrix.');
-  xhr('Контроль CORS example.com','https://example.com/');
-  setTimeout(function(){
-   xhr('Matrix API через CORS','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml');
-   setTimeout(function(){
-    opaque('Matrix API через no-cors (только факт сетевого завершения)','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml');
-    setTimeout(function(){opaque('Контроль example.com через no-cors','https://example.com/');},100);
-   },100);
-  },100);
+  log('Браузер: '+navigator.userAgent);
+  log('navigator.onLine: '+navigator.onLine);
+  log('Страница: '+location.href);
+  log('Проверяются только GET-запросы чтения. Активация, вход и изменение данных НЕ выполняются.');
+  test('Контроль CORS (GitHub API)','https://api.github.com/',function(){
+   test('Matrix — базовый load.php','https://iptv.matrix.online/server/load.php',function(){
+    test('Matrix — список каналов','https://iptv.matrix.online/server/load.php?type=itv&action=get_all_channels&JsHttpRequest=1-xml',function(){
+     test('Matrix — жанры','https://iptv.matrix.online/server/load.php?type=itv&action=get_genres&JsHttpRequest=1-xml',function(){
+      test('Matrix — таблица данных','https://iptv.matrix.online/server/load.php?type=itv&action=get_simple_data_table&JsHttpRequest=1-xml',function(){
+       log('--- ТЕСТЫ ЗАВЕРШЕНЫ ---');b.disabled=false;
+      });
+     });
+    });
+   });
+  });
+ }
+ b.onclick=run;
+ if(copy)copy.onclick=function(){
+  if(!report){out.textContent='Сначала запустите тесты.';return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+   navigator.clipboard.writeText(report).then(function(){out.textContent=report+'\n\nОтчёт скопирован.'},function(){out.textContent=report+'\n\nСкопируйте текст вручную.'});
+  }else{out.textContent=report+'\n\nВыделите и скопируйте текст вручную.';}
  };
 })();
 </script>
