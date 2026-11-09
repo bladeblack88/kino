@@ -49,7 +49,7 @@ footer{color:#667085;text-align:center;padding:22px 10px;font-size:12px}
 <div id="message" role="status">Подключаемся к серверу Matrix IPTV…</div><div class="side" style="margin:14px 0;padding:14px">
 <div style="font-weight:bold;margin-bottom:10px">Диагностика соединения Matrix</div>
 <div style="color:#aab3c3;font-size:13px;line-height:1.4;margin-bottom:10px">Проверки выполняются из Safari. Авторизация и активация не отправляются.</div>
-<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
+<div class="toolbar" style="flex-wrap:wrap"><button id="runTests" type="button" onclick="runConnectionTests();return false;">Запустить тесты</button><button id="copyTests" class="secondary" type="button">Скопировать отчёт</button></div>
 <pre id="testResults" style="white-space:pre-wrap;word-break:break-word;color:#dbe3f2;background:#090b12;padding:12px;border-radius:8px;font:12px/1.5 Menlo,monospace">Нажмите «Запустить тесты».</pre></div>
 <div class="toolbar"><label for="playlistFile" style="display:block;background:#1c2534;border:1px solid #30394c;border-radius:10px;padding:12px 14px;font-weight:bold;cursor:pointer">Открыть плейлист M3U с iPad</label><input id="playlistFile" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" style="display:none"></div>
 <div class="filters" id="filters"><button class="active" data-cat="all" type="button">Все каналы</button><button class="secondary" id="favFilter" type="button">★ Избранное</button></div>
@@ -214,6 +214,9 @@ function playChannel(index){
 var testReport='';
 function runConnectionTests(){
  var box=byId('testResults'),lines=[];
+ if(!box){alert('Не найден блок диагностики');return false;}
+ box.textContent='Кнопка нажата. Запускаю проверки…';
+ try {
  function add(s){lines.push(s);box.textContent=lines.join('\n');testReport=lines.join('\n');}
  function requestTest(label,url,done){
   var x=new XMLHttpRequest(),finished=false,timer;
@@ -231,6 +234,8 @@ function runConnectionTests(){
  requestTest('API список каналов',API_URL,function(){
   requestTest('API проверка активации (только GET, без активации)','https://iptv.matrix.online/api/v1/auth/app/activate/check',function(){add('--- КОНЕЦ ОТЧЁТА ---');});
  });
+ } catch(e) { box.textContent='Ошибка JavaScript диагностики: '+(e.message||e); testReport=box.textContent; }
+ return false;
 }
 byId('runTests').onclick=runConnectionTests;
 byId('copyTests').onclick=function(){
