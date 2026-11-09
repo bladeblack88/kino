@@ -302,7 +302,7 @@ loadChannels();
     x.open('GET',item.url,true);x.timeout=12000;x.withCredentials=false;
     x.onload=function(){
      if(done)return;done=true;clearTimeout(t);
-     var body='';try{body=String(x.responseText||'').replace(/\\s+/g,' ').slice(0,180)}catch(e){}
+     var body='';try{body=String(x.responseText||'').replace(/\s+/g,' ').slice(0,180)}catch(e){}
      finish(xi,'HTTP '+x.status+(body?' | '+body:'')+' | ответ прочитан');
     };
     x.onerror=function(){if(done)return;done=true;clearTimeout(t);finish(xi,'ОШИБКА CORS/СЕТИ: ответ прочитать нельзя')};
